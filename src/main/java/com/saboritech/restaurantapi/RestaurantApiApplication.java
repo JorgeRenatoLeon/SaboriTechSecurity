@@ -8,12 +8,9 @@ import com.saboritech.restaurantapi.repositories.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
-import java.util.logging.Logger;
 
 @SpringBootApplication
 public class RestaurantApiApplication {

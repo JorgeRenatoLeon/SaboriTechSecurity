@@ -1,11 +1,13 @@
 package com.saboritech.restaurantapi.security;
 
+import com.saboritech.restaurantapi.models.ERole;
 import com.saboritech.restaurantapi.security.Jwt.AuthEntryPointJwt;
 import com.saboritech.restaurantapi.security.Jwt.AuthTokenFilter;
 import com.saboritech.restaurantapi.services.impl.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -58,7 +60,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests().antMatchers("/api/auth/**").permitAll()
                 .antMatchers("/api/test/**").permitAll()
-                .antMatchers("/api/platillo").permitAll()
+                .antMatchers(HttpMethod.POST,"/api/**")
+                .hasAnyRole("ADMIN")
+                .antMatchers(HttpMethod.PUT,"/api/**")
+                .hasAnyRole("ADMIN")
                 .antMatchers("/").permitAll()
                 .anyRequest().authenticated();
 
