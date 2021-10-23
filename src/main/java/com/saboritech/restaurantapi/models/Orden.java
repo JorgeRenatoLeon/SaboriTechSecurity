@@ -5,17 +5,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.ArrayList;
 
-import javax.persistence.Entity;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.ManyToMany;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "orden")
@@ -30,9 +20,11 @@ public class Orden {
     private String nombreCliente;
     private String notasDeOrden;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "platillos_orden", joinColumns = @JoinColumn(name = "orden_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "platillo_id", referencedColumnName = "id"))
-    private List<Platillo> platillos;
+    @OneToMany(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
+    @JoinTable(name = "platillos_cantidad_orden",
+            joinColumns = @JoinColumn(name = "orden_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "platillocantidad_id", referencedColumnName = "id"))
+    private List<PlatilloCantidad> platillos;
 
     @Temporal(TemporalType.TIMESTAMP)
     Date fechaHoraCreacion;
@@ -66,11 +58,11 @@ public class Orden {
         this.notasDeOrden = notasDeOrden;
     }
 
-    public List<Platillo> getPlatillos() {
+    public List<PlatilloCantidad> getPlatillos() {
         return new ArrayList<>(platillos);
     }
 
-    public void setPlatillos(List<Platillo> platillos) {
+    public void setPlatillos(List<PlatilloCantidad> platillos) {
         this.platillos = platillos;
     }
 

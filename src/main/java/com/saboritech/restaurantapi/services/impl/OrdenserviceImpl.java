@@ -7,6 +7,7 @@ import java.util.Optional;
 import com.saboritech.restaurantapi.models.Orden;
 import com.saboritech.restaurantapi.models.Platillo;
 
+import com.saboritech.restaurantapi.models.PlatilloCantidad;
 import com.saboritech.restaurantapi.repositories.OrdenRepository;
 import com.saboritech.restaurantapi.repositories.PlatilloRepository;
 
@@ -33,13 +34,18 @@ public class OrdenserviceImpl implements OrdenService {
 
     @Override
     public ResponseEntity<Orden> crearOrden(OrdenRequest nuevaOrdenRequest) {
-        List<Platillo> platillos = new ArrayList<>(nuevaOrdenRequest.getPlatillos().size());
+        List<PlatilloCantidad> platillos = new ArrayList<>(nuevaOrdenRequest.getPlatillos().size());
         Float totalOrden = 0.0f;
 
-        for(String nombre : nuevaOrdenRequest.getPlatillos()) {
-            Platillo platillo = platilloRepository.findByNombre(nombre);
-            platillos.add(platillo);
-            totalOrden += platillo.getPrecio();
+        for(OrdenRequest.PlatilloOrder platilloOrder : nuevaOrdenRequest.getPlatillos()) {
+            Platillo platillo = platilloRepository.findByNombre(platilloOrder.getDish());
+            PlatilloCantidad platilloCantidad = new PlatilloCantidad();
+            platilloCantidad.setPlatillo(platillo);
+            platilloCantidad.setQuantity(platilloOrder.getQuantity());
+            var subtotal = platillo.getPrecio() * platilloOrder.getQuantity();
+            platilloCantidad.setSubTotal(subtotal);
+            platillos.add(platilloCantidad);
+            totalOrden += subtotal;
         }
 
         Orden orden = new Orden();
@@ -110,36 +116,41 @@ public class OrdenserviceImpl implements OrdenService {
     }
 
     class PlatillosTotal {
-        private List<Platillo> platillos;
-        private List<String> platillosList;
+        private List<PlatilloCantidad> platillos;
+        private List<OrdenRequest.PlatilloOrder> platillosList;
         private Float totalOrden = 0.0f;
     
-        public PlatillosTotal(List<String> platillosList) {
+        public PlatillosTotal(List<OrdenRequest.PlatilloOrder> platillosList) {
             setPlatillos(new ArrayList<>(platillosList.size()));
             setPlatillos_list(platillosList);
         }
     
         public void setPlatillosTotal() {
-            for(String nombre : platillosList) {
-                Platillo platillo = platilloRepository.findByNombre(nombre);
-                platillos.add(platillo);
-                totalOrden += platillo.getPrecio();
+            for(OrdenRequest.PlatilloOrder nombre : platillosList) {
+                Platillo platillo = platilloRepository.findByNombre(nombre.getDish());
+                PlatilloCantidad platilloCantidad = new PlatilloCantidad();
+                platilloCantidad.setPlatillo(platillo);
+                platilloCantidad.setQuantity(nombre.getQuantity());
+                var subtotal = nombre.getQuantity() * platillo.getPrecio();
+                platilloCantidad.setSubTotal(subtotal);
+                platillos.add(platilloCantidad);
+                totalOrden += subtotal;
             }
         }
     
-        public List<Platillo> getPlatillos() {
+        public List<PlatilloCantidad> getPlatillos() {
             return this.platillos;
         }
     
-        public void setPlatillos(List<Platillo> platillos) {
+        public void setPlatillos(List<PlatilloCantidad> platillos) {
             this.platillos = platillos;
         }
     
-        public List<String> getPlatillosList() {
+        public List<OrdenRequest.PlatilloOrder> getPlatillosList() {
             return this.platillosList;
         }
     
-        public void setPlatillos_list(List<String> platillos_list) {
+        public void setPlatillos_list(List<OrdenRequest.PlatilloOrder> platillos_list) {
             this.platillosList = platillos_list;
         }
     

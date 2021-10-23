@@ -10,6 +10,45 @@ import javax.validation.constraints.NotNull;
 
 @Data
 public class OrdenRequest {
+
+    public static class PlatilloOrder {
+        private String dish;
+        private Integer quantity;
+        private Float subTotal;
+
+        public PlatilloOrder() {
+        }
+
+        public PlatilloOrder(String dish, Integer quantity, Float subTotal) {
+            this.dish = dish;
+            this.quantity = quantity;
+            this.subTotal = subTotal;
+        }
+
+        public String getDish() {
+            return dish;
+        }
+
+        public void setDish(String dish) {
+            this.dish = dish;
+        }
+
+        public Integer getQuantity() {
+            return quantity;
+        }
+
+        public void setQuantity(Integer quantity) {
+            this.quantity = quantity;
+        }
+
+        public Float getSubTotal() {
+            return subTotal;
+        }
+
+        public void setSubTotal(Float subTotal) {
+            this.subTotal = subTotal;
+        }
+    }
     
     @NotBlank
     private String nombreCliente;
@@ -17,11 +56,11 @@ public class OrdenRequest {
     private String notasDeOrden;
 
     @NotNull
-    private List<String> platillos;
+    private List<PlatilloOrder> platillos;
 
     private String estado;
 
-    public void setPlatillos(List<String> platillos) {
+    public void setPlatillos(List<PlatilloOrder> platillos) {
         this.platillos = Collections.unmodifiableList(platillos);
     }
 
@@ -42,7 +81,7 @@ public class OrdenRequest {
         this.notasDeOrden = notasDeOrden;
     }
 
-    public List<String> getPlatillos() {
+    public List<PlatilloOrder> getPlatillos() {
         return this.platillos;
     }
 
